@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\krd\AndroidStudioProjects\BabyShout" />
-            <option value="C:\Users\krd\AndroidStudioProjects\BabyShout\app" />
+            <option value="C:\Software\BabyShout" />
+            <option value="C:\Software\BabyShout\app" />
           </set>
         </option>
       </GradleProjectSettings>

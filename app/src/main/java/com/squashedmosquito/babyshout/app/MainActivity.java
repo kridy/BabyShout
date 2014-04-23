@@ -16,7 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+
+import com.squashedmosquito.babyshout.app.Fragment.BabyUnitFragment;
+import com.squashedmosquito.babyshout.app.Fragment.ParentUnitFragment;
+import com.squashedmosquito.babyshout.app.Util.QueuedAnimationItem;
+import com.squashedmosquito.babyshout.app.Util.QueuedAnimationManager;
+import com.squashedmosquito.babyshout.app.Util.QueuedViewAnimation;
 
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -95,9 +103,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return BabyUnitFragment.newInstance();
+                case 1:
+                    return PlaceholderFragment.newInstance(0);
+                case 2:
+                    return ParentUnitFragment.newInstance();
+                default:
+                    return PlaceholderFragment.newInstance(0);
+            }
+
         }
 
         @Override
@@ -130,6 +146,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private TextView babyUnitSelectorView;
+        private TextView parentUnitSelectorView;
+        private Animation babyUnitSelectorAnimation;
+        private Animation parentUnitSelectorAnimation;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -147,12 +167,39 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         }
 
         @Override
+        public void setMenuVisibility(boolean menuVisible) {
+            super.setMenuVisibility(menuVisible);
+
+            if(!menuVisible) return;
+
+            QueuedAnimationManager manager = new QueuedAnimationManager();
+            manager.enqueue(
+                    new QueuedViewAnimation(babyUnitSelectorView, babyUnitSelectorAnimation));
+            manager.enqueue(
+                    new QueuedViewAnimation(parentUnitSelectorView, parentUnitSelectorAnimation));
+
+            manager.setDelay(500);
+            manager.start();
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_unit_selector, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+            babyUnitSelectorView = (TextView) rootView.findViewById(R.id.babyUnitSelector);
+            parentUnitSelectorView = (TextView) rootView.findViewById(R.id.parentUnitSelectorView);
             return rootView;
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+
+            babyUnitSelectorAnimation = (Animation) AnimationUtils
+                    .loadAnimation(getActivity(), R.anim.fade_out_slide_right);
+
+            parentUnitSelectorAnimation = (Animation) AnimationUtils
+                    .loadAnimation(getActivity(), R.anim.fade_out_slide_right);
         }
     }
 
